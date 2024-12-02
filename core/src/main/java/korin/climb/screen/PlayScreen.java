@@ -5,6 +5,8 @@ import Tools.worldCreator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -40,6 +42,7 @@ public class PlayScreen implements Screen {
     private final Box2DDebugRenderer debugRenderer;
 
     private final Ninja player;
+    private  Music music;
 
     private final Vector2 gravityDirection;
     private final WorldContactListener worldContactListener;
@@ -77,6 +80,10 @@ public class PlayScreen implements Screen {
         world.setContactListener(worldContactListener);
 
         this.worldContactListener = worldContactListener;
+        music = KorinClimb.assetManager.get("Music/Castlevania_ Bloody Tears  EPIC VERSION.mp3", Music.class);
+        music.setLooping(true);
+        music.setVolume(0.5f);
+        music.play();
 
         dangers = new Array<>();
 
@@ -106,9 +113,12 @@ public class PlayScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && gravityDirection.x == 100) {
             gravityDirection.set(-100, 0);
             world.setGravity(gravityDirection);
+            KorinClimb.assetManager.get("Sounds/Zoro Dash Sound Effect FX.mp3", Sound.class).play();
+
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             gravityDirection.set(100, 0);
             world.setGravity(gravityDirection);
+            KorinClimb.assetManager.get("Sounds/Zoro Dash Sound Effect FX.mp3", Sound.class).play();
         }
     }
 
@@ -174,11 +184,13 @@ public class PlayScreen implements Screen {
 
         if (gameOver()) {
             game.setScreen(new GameOverScreen(game));
+            music.stop();
             dispose();
         }
 
         if (win()) {
             game.setScreen(new WinScreen(game));
+            music.stop();
             dispose();
         }
     }
@@ -189,7 +201,7 @@ public class PlayScreen implements Screen {
      * @return True if the player is dead and the state timer exceeds 1 second
      */
     public boolean gameOver() {
-        return player.isDead() && player.getStateTimer() > 1;
+        return player.isDead() && player.getStateTimer() > 1.2;
     }
 
     /**

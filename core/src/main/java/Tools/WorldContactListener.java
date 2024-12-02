@@ -1,7 +1,10 @@
 package Tools;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.physics.box2d.*;
+import korin.climb.KorinClimb;
 import korin.climb.Sprites.*;
+import korin.climb.screen.PlayScreen;
 
 /**
  * Handles collisions in the game.
@@ -23,17 +26,26 @@ public class WorldContactListener implements ContactListener {
 
         if (fixtureA.getUserData() instanceof Ground || fixtureB.getUserData() instanceof Ground) {
             isGrounded = true;
+            Sound groundSound = KorinClimb.assetManager.get("Sounds/Anime People Running (One Piece) - Sound Effect for editing-[AudioTrimmer.com].mp3", Sound.class);
+            groundSound.loop();
         }
 
-        if (fixtureA.getUserData() instanceof Danger || fixtureB.getUserData() instanceof Danger) {
+        if ((fixtureA.getUserData() instanceof Danger && !isDead) || (fixtureB.getUserData() instanceof Danger && !isDead)) {
             isDead = true;
+            KorinClimb.assetManager.get("Sounds/Anime Smash Punch - Sound Effect for editing.mp3", Sound.class).play();
+            KorinClimb.assetManager.get("Sounds/Fail Sound Effect.mp3", Sound.class).play();
+
         }
 
-        if (fixtureA.getUserData() instanceof Traps || fixtureB.getUserData() instanceof Traps) {
+        if ((fixtureA.getUserData() instanceof Traps && !isDead) || (fixtureB.getUserData() instanceof Traps && !isDead)) {
             isDead = true;
+            KorinClimb.assetManager.get("Sounds/Anime Smash Punch - Sound Effect for editing.mp3", Sound.class).play();
+            KorinClimb.assetManager.get("Sounds/Fail Sound Effect.mp3", Sound.class).play();
+
         }
 
         if (fixtureA.getUserData() instanceof Finish || fixtureB.getUserData() instanceof Finish) {
+            KorinClimb.assetManager.get("Sounds/Victory Sound Effect.mp3", Sound.class).play();
             isFinish = true;
         }
 
@@ -51,6 +63,8 @@ public class WorldContactListener implements ContactListener {
 
         if (fixtureA.getUserData() instanceof Ground || fixtureB.getUserData() instanceof Ground) {
             isGrounded = false;
+            Sound groundSound = KorinClimb.assetManager.get("Sounds/Anime People Running (One Piece) - Sound Effect for editing-[AudioTrimmer.com].mp3", Sound.class);
+            groundSound.stop();
         }
     }
 
@@ -61,6 +75,7 @@ public class WorldContactListener implements ContactListener {
      */
     public boolean isGrounded() {
         return isGrounded;
+
     }
 
     /**
@@ -69,6 +84,10 @@ public class WorldContactListener implements ContactListener {
      * @return True if the player is dead, false otherwise
      */
     public boolean isDead() {
+        if (isDead) {
+            Sound groundSound = KorinClimb.assetManager.get("Sounds/Anime People Running (One Piece) - Sound Effect for editing-[AudioTrimmer.com].mp3", Sound.class);
+            groundSound.stop();
+        }
         return isDead;
     }
 
@@ -78,6 +97,10 @@ public class WorldContactListener implements ContactListener {
      * @return True if the player has finished, false otherwise
      */
     public boolean isFinish() {
+        if (isFinish) {
+            Sound groundSound = KorinClimb.assetManager.get("Sounds/Anime People Running (One Piece) - Sound Effect for editing-[AudioTrimmer.com].mp3", Sound.class);
+            groundSound.stop();
+        }
         return isFinish;
     }
 
